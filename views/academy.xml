@@ -49,6 +49,19 @@
 			</field>
 		</record>
 
+		<record model="ir.ui.view" id="pivot_student_tree">
+			<field name="name">academia.student.pivot</field>
+			<field name="model">academia.student</field>
+			<field name="type">pivot</field>
+			<field name="arch" type="xml">
+				<pivot string="Facturacion por escuela">
+					<field name="create_date" type="row"/>
+					<!--field name="ammount_invoice" type="measure"/-->
+					<field name="partner_id" type="row"/>
+				</pivot>
+			</field>
+		</record>
+
 		<record model="ir.ui.view" id="tree_student_tree">
 			<field name="name">academia.student.tree</field>
 			<field name="model">academia.student</field>
@@ -191,7 +204,7 @@
 		<record model="ir.actions.act_window" id="act_grados">
 			<field name="name">Grados</field>
 			<field name="res_model">academia.grado</field>
-			<field name="view_mode">tree,form</field>
+			<field name="view_mode">tree,form,pivot</field>
 		</record>
 
 		<menuitem id="id_principal_academia" name="Odoo Practica Academia"/>

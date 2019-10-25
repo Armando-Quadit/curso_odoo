@@ -92,12 +92,10 @@ class account_move(models.Model):
 class res_partner(models.Model):
 	_name = 'res.partner'
 	_inherit = 'res.partner'
-	type = fields.Selection(
+	company_type = fields.Selection(
 		selection_add = [
 		('is_school', 'Escuela'),
-		('student','Estudiante')])
-
-	company_type = fields.Selection('type',self)
+		('student_id','Estudiante')])
 
 	student_id = fields.Many2one(
 		'academia.student',
