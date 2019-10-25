@@ -11,13 +11,13 @@ class make_student_invoice(models.TransientModel):
 	@api.multi
 	def make_invoice(self):
 		active_ids = self._context['active_ids']
-		print("######### ACTIVE IDS >>>>> ",active_ids)
+		#print("######### ACTIVE IDS >>>>> ",active_ids)
 		category_obj = self.env['product.category']
 		category_id = category_obj.search([('name','=','Facturacion Colegiatura')])
 		for st_id in active_ids:
 			student_br = self.env['academia.student'].search([('id','=',st_id)])
 			if student_br.state in ('draft', 'cancel'):
-				raise ValidationError(_('No puedes generar una factura para Estudiante Expulsado o su Registro en Borrador.'))
+				raise exceptions.ValidationError('No puedes generar una factura para Estudiante Expulsado o su Registro en Borrador.')
 			if category_id:
 				product_obj = self.env['product.product']
 				product_ids = product_obj.search([('categ_id','=',category_id.id)])
@@ -27,14 +27,27 @@ class make_student_invoice(models.TransientModel):
 				partner_id = False
 				if partner_br:
 					partner_id = partner_br[0].id
-				print("### st_id", st_id)
-				print("### student_br.id", student_br.id)
-				print("### PARTNER BR", partner_br.id)
+				invoice_lines = []
+				for pr in product_ids:
+					xline = (0,0,{
+						'product_id' : pr.id,
+						'price_unit' : pr.list_price,
+						'quantity' : 1,
+						'account_id' : pr.categ_id.property_account_income_categ_id.id,
+						'name' : pr.name + " [" + str(pr.default_code) + "]",
+						})
+					invoice_lines.append(xline)
 				vals = {
 					'partner_id' : partner_id,
 					'account_id' : partner_br[0].property_account_receivable_id.id, 
+					'invoice_lines_ids' : invoice_lines,
 				}
 			invoice_id = invoice_obj.create(vals)
+			invoice_list = [x.id for x in student_br.invoice_ids]
+			invoice_list.append(invoice_id.id)
+			student_br.write({
+				'invoice_ids' : [(6,0, invoice_list)],
+				})
 		return True
 
 class academia_materia_list(models.Model):

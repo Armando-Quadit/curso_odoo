@@ -54,9 +54,10 @@
 			<field name="model">academia.student</field>
 			<field name="type">pivot</field>
 			<field name="arch" type="xml">
-				<pivot string="Facturacion por escuela">
+				<pivot string="Facturacion por Escuela">
 					<field name="create_date" type="row"/>
 					<!--field name="ammount_invoice" type="measure"/-->
+					<field name="age" type="measure"/>
 					<field name="partner_id" type="row"/>
 				</pivot>
 			</field>
