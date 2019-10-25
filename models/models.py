@@ -144,6 +144,14 @@ class academia_student(models.Model):
 			promedio = acum/len(self.calificaciones_id)
 			self.promedio = promedio
 
+	@api.depends('invoice_ids')
+	def calcula_amount(self):
+		acum = 0.0
+		for xcal in self.invoice_ids:
+			acum+= xcal.amount_total
+		if acum:
+			self.amount_invoice = acum
+
 	@api.model
 	def _get_school_default(self):
 		school_id = self.env['res.partner'].search([('name','=','Escuela Comodin')])
@@ -178,6 +186,8 @@ class academia_student(models.Model):
 	grado_id = fields.Many2one('academia.grado', 'Grado')
 
 	promedio = fields.Float('Promedio', digits=(14,2), compute="calcula_promedio")
+
+	amount_invoice = fields.Float('Monto Facturado', digits=(14,2), compute="calcula_amount")
 
 	@api.onchange('grado_id')
 	def onchange_grado(self):
